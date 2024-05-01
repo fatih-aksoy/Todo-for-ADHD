@@ -59,6 +59,10 @@ function App() {
       speechSynthesis.speak(utterance);
     }
   };
+  //! listen all button
+  const speakAllTasks = () => {
+    tasks.forEach((task) => speakTask(task.title));
+  };
 
   useEffect(() => {
     const synth = window.speechSynthesis;
@@ -80,7 +84,12 @@ function App() {
         onDelete={deleteTaskById}
         speakTask={speakTask}
       />
-      <button className="listenAll" size={20}>
+      {/* //! Listen All button */}
+      <button
+        onClick={speakAllTasks}
+        className="listenAll"
+        size={20}
+      >
         Listen All{" "}
       </button>
     </>
