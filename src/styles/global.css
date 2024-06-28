@@ -9,8 +9,6 @@ body {
   background: #191919;
   color: #f2f2f2;
   min-height: 100vh;
-  
-
 }
 
 button {
@@ -31,4 +29,12 @@ button {
   gap: 6px;
   font-weight: 700;
   font-size: 14px;
+}
+
+.speech {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100px;
+  position: relative;
 }

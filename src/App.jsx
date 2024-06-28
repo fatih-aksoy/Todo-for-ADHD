@@ -7,6 +7,7 @@ const LOCAL_STORAGE_KEY = "todo:savedTasks";
 function App() {
   const [tasks, setTasks] = useState([]);
   const [speechSynthesis, setSpeechSynthesis] = useState(null); //! speech
+  const [rate, setRate] = useState(0.5); //! speed of speech
 
   function loadSavedTasks() {
     const saved = localStorage.getItem(LOCAL_STORAGE_KEY);
@@ -56,6 +57,8 @@ function App() {
   const speakTask = (task) => {
     if (speechSynthesis) {
       const utterance = new SpeechSynthesisUtterance(task);
+      //! speed of Speech TEST!!!! silinebilir.
+      utterance.rate = rate;
       speechSynthesis.speak(utterance);
     }
   };
@@ -85,13 +88,22 @@ function App() {
         speakTask={speakTask}
       />
       {/* //! Listen All button */}
-      <button
-        onClick={speakAllTasks}
-        className="listenAll"
-        size={20}
-      >
+
+      <button onClick={speakAllTasks} className="listenAll" size={20}>
         Listen All{" "}
       </button>
+      <div className="speech">
+        <label htmlFor="rate">Speech Rate:{rate}</label>
+        <input
+          id="rate"
+          type="range"
+          min="0.1"
+          max="2"
+          step="0.1"
+          value={rate}
+          onChange={(e) => setRate(Number(e.target.value))}
+        />
+      </div>
     </>
   );
 }
@@ -104,3 +116,4 @@ export default App;
 // ! yarn add react-icons
 // ! tum css lerden sonra artik state lere geceriz.
 // !  {...tasks}, seklinde yazsak diger tasklar kaybolur oyuzden  ...tasks, boyle yazariz ve diger tasklri tutariz.
+// ! yavas sembolu turtle, hizli sembolu rabbit olabilir, eklenebilir.
