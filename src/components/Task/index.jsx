@@ -1,9 +1,41 @@
+import { useState, useRef, useEffect } from "react";
 import styles from "./task.module.css";
 import { BsFillCheckCircleFill } from "react-icons/bs";
-import { TbTrash } from "react-icons/tb";
-import { TbVolume } from "react-icons/tb";
+import { TbTrash, TbVolume, TbEdit, TbCheck, TbX } from "react-icons/tb";
 
-export function Task({ task, onDelete, onComplete, speakTask }) {
+export function Task({ task, onDelete, onComplete, onEdit, speakTask }) {
+  const [isEditing, setIsEditing] = useState(false);
+  const [newTitle, setNewTitle] = useState(task.title);
+  const inputRef = useRef(null);
+
+  function handleEditClick() {
+    setIsEditing(true);
+  }
+
+  function handleSaveClick() {
+    onEdit(task.id, newTitle);
+    setIsEditing(false);
+  }
+
+  function handleCancelClick() {
+    setNewTitle(task.title);
+    setIsEditing(false);
+  }
+
+  function handleKeyDown(event) {
+    if (event.key === "Enter") {
+      handleSaveClick();
+    } else if (event.key === "Escape") {
+      handleCancelClick();
+    }
+  }
+
+  useEffect(() => {
+    if (isEditing && inputRef.current) {
+      inputRef.current.focus();
+    }
+  }, [isEditing]);
+
   return (
     <div className={styles.task}>
       <button
@@ -13,20 +45,50 @@ export function Task({ task, onDelete, onComplete, speakTask }) {
         {task.isCompleted ? <BsFillCheckCircleFill /> : <div />}
       </button>
 
-      <p className={task.isCompleted ? styles.textCompleted : ""}>
-        {task.title}
-      </p>
-      <button>
-        <TbVolume
-          className={styles.listenButton}
-          size={20}
-          onClick={() => speakTask(task.title)}
+      {isEditing ? (
+        <input
+          ref={inputRef}
+          type="text"
+          value={newTitle}
+          onChange={(e) => setNewTitle(e.target.value)}
+          onKeyDown={handleKeyDown}
+          className={styles.editInput}
         />
-      </button>
+      ) : (
+        <p className={task.isCompleted ? styles.textCompleted : ""}>
+          {task.title}
+        </p>
+      )}
 
-      <button className={styles.deleteButton} onClick={() => onDelete(task.id)}>
-        <TbTrash size={20} />
-      </button>
+      {isEditing ? (
+        <>
+          <button onClick={handleSaveClick}>
+            <TbCheck size={20} />
+          </button>
+          <button onClick={handleCancelClick}>
+            <TbX size={20} />
+          </button>
+        </>
+      ) : (
+        <>
+          <button onClick={handleEditClick}>
+            <TbEdit size={20} />
+          </button>
+          <button>
+            <TbVolume
+              className={styles.listenButton}
+              size={20}
+              onClick={() => speakTask(task.title)}
+            />
+          </button>
+          <button
+            className={styles.deleteButton}
+            onClick={() => onDelete(task.id)}
+          >
+            <TbTrash size={20} />
+          </button>
+        </>
+      )}
     </div>
   );
 }

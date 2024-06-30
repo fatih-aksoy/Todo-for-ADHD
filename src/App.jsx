@@ -6,8 +6,8 @@ const LOCAL_STORAGE_KEY = "todo:savedTasks";
 
 function App() {
   const [tasks, setTasks] = useState([]);
-  const [speechSynthesis, setSpeechSynthesis] = useState(null); //! speech
-  const [rate, setRate] = useState(0.5); //! speed of speech
+  const [speechSynthesis, setSpeechSynthesis] = useState(null);
+  const [rate, setRate] = useState(0.5);
 
   function loadSavedTasks() {
     const saved = localStorage.getItem(LOCAL_STORAGE_KEY);
@@ -53,16 +53,28 @@ function App() {
     });
     setTasksAndSave(newTasks);
   }
-  //! speech
+
+  function editTaskById(taskId, newTitle) {
+    const newTasks = tasks.map((task) => {
+      if (task.id === taskId) {
+        return {
+          ...task,
+          title: newTitle,
+        };
+      }
+      return task;
+    });
+    setTasksAndSave(newTasks);
+  }
+
   const speakTask = (task) => {
     if (speechSynthesis) {
       const utterance = new SpeechSynthesisUtterance(task);
-      //! speed of Speech TEST!!!! silinebilir.
       utterance.rate = rate;
       speechSynthesis.speak(utterance);
     }
   };
-  //! listen all button
+
   const speakAllTasks = () => {
     tasks.forEach((task) => speakTask(task.title));
   };
@@ -81,19 +93,8 @@ function App() {
   return (
     <>
       <Header onAddTask={addTask} />
-      <Tasks
-        onComplete={toggleTaskCompletedById}
-        tasks={tasks}
-        onDelete={deleteTaskById}
-        speakTask={speakTask}
-      />
-      {/* //! Listen All button */}
-
-      <button onClick={speakAllTasks} className="listenAll" size={20}>
-        Listen All{" "}
-      </button>
       <div className="speech">
-        <label htmlFor="rate">Speech Rate:{rate}</label>
+        <label htmlFor="rate">Speech Rate: {rate}</label>
         <input
           id="rate"
           type="range"
@@ -104,16 +105,18 @@ function App() {
           onChange={(e) => setRate(Number(e.target.value))}
         />
       </div>
+      <Tasks
+        onComplete={toggleTaskCompletedById}
+        tasks={tasks}
+        onDelete={deleteTaskById}
+        onEdit={editTaskById}
+        speakTask={speakTask}
+      />
+      <button onClick={speakAllTasks} className="listenAll" size={20}>
+        Listen All{" "}
+      </button>
     </>
   );
 }
 
 export default App;
-// ! install "yarn"
-// ! to start app "yarn run dev" veya "yarn dev"
-// ! https://github.com/GBDev13
-// ! https://vitejs.dev/guide/  burdan basladik  npm create vite@latest. kurumlardan sonra yarn dev ile actik
-// ! yarn add react-icons
-// ! tum css lerden sonra artik state lere geceriz.
-// !  {...tasks}, seklinde yazsak diger tasklar kaybolur oyuzden  ...tasks, boyle yazariz ve diger tasklri tutariz.
-// ! yavas sembolu turtle, hizli sembolu rabbit olabilir, eklenebilir.
