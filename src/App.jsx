@@ -8,6 +8,7 @@ function App() {
   const [tasks, setTasks] = useState([]);
   const [speechSynthesis, setSpeechSynthesis] = useState(null);
   const [rate, setRate] = useState(0.5);
+  const [language, setLanguage] = useState("en-US");
 
   function loadSavedTasks() {
     const saved = localStorage.getItem(LOCAL_STORAGE_KEY);
@@ -70,6 +71,7 @@ function App() {
   const speakTask = (task) => {
     if (speechSynthesis) {
       const utterance = new SpeechSynthesisUtterance(task);
+      utterance.lang = language;
       utterance.rate = rate;
       speechSynthesis.speak(utterance);
     }
@@ -104,6 +106,16 @@ function App() {
           value={rate}
           onChange={(e) => setRate(Number(e.target.value))}
         />
+        <label htmlFor="language">Language: </label>
+        <select
+          id="language"
+          value={language}
+          onChange={(e) => setLanguage(e.target.value)}
+        >
+          <option value="en-US">English</option>
+          <option value="sv-SE">Swedish</option>
+          <option value="tr-TR">Turkish</option>
+        </select>
       </div>
       <Tasks
         onComplete={toggleTaskCompletedById}
